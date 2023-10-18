@@ -80,7 +80,7 @@ app.get('/details/:id',async(req,res) => {
 
 // update
 
-app.put("/products/:id", async (req, res) => {
+app.put("/details/:id", async (req, res) => {
     const id = req.params.id;
     const data = req.body;
     const filter = { _id: new ObjectId(id) };
