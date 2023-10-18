@@ -59,13 +59,51 @@ app.post('/products',async(req,res) =>{
 
 //  get one
 
-app.get('/products/:id', async(req,res) => {
+app.get('/products/:brand', async(req,res) => {
 
-    const id = req.params.id;
+    const id = req.params.brand;
     const query = { brand : id.toLowerCase()};
     const result = await productsData.find(query).toArray()
     res.send(result);
 })
+
+// get signle data
+
+app.get('/details/:id',async(req,res) => {
+
+    const id = req.params.id;
+    const users = { _id : new ObjectId (id)};
+    const result = await productsData.findOne(users)
+    res.send(result);
+
+})
+
+// update
+
+app.put("/products/:id", async (req, res) => {
+    const id = req.params.id;
+    const data = req.body;
+    const filter = { _id: new ObjectId(id) };
+    const options = { upsert: true };
+    const updatedUSer = {
+      $set: {
+        name: data.name,
+        brand: data.brand,
+        price: data.price,
+        ratting: data.ratting,
+        description: data.description,
+        photo: data.photo,
+      },
+    };
+    const result = await productsData.updateOne(
+      filter,
+      updatedUSer,
+      options
+    );
+    res.send(result);
+  });
+
+
 
 
 
