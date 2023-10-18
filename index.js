@@ -2,7 +2,8 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+require('dotenv').config()
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT ||  5000
 
 // midleware
@@ -10,8 +11,6 @@ const port = process.env.PORT ||  5000
 app.use(cors())
 app.use(express.json())
 
-// brandshopbd71
-// brandshop1233
 
 
 
@@ -19,7 +18,7 @@ app.use(express.json())
 
 
 
-const uri = `mongodb+srv://brandshopbd71:brandshop1233@cluster0.mtnypra.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.mtnypra.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -34,6 +33,42 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+
+    const productsData = client.db("productDB").collection("products");
+
+//  post
+
+app.post('/products',async(req,res) =>{
+
+    const user = req.body
+    const result = await productsData.insertOne(user);
+    res.send(result)
+    
+
+})
+
+// get all
+
+ app.get('/products',async(req,res) => {
+
+    const result = await productsData.find().toArray();
+    res.send(result);
+
+ })
+
+//  get one
+
+app.get('/products/:id', async(req,res) => {
+
+    const id = req.params.id;
+    const query = { brand : id.toLowerCase()};
+    const result = await productsData.find(query).toArray()
+    res.send(result);
+})
+
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
