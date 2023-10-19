@@ -105,6 +105,50 @@ app.put("/details/:id", async (req, res) => {
 
 
 
+  // mycart
+
+  // post cat
+
+  const cartData = client.db("productDB").collection("useraddcart");
+
+
+  app.post('/carts',async(req,res) => {
+
+    const user = req.body
+    const result = await cartData.insertOne(user);
+    res.send(result)
+    
+
+  })
+
+  app.get('/carts',async(req,res) => {
+   
+    const result = await cartData.find().toArray();
+    res.send(result);
+
+
+  })
+
+  // get one
+
+  app.get('/carts/:id',async(req,res) => {
+
+    const id = req.params.id
+    const users = { _id : new ObjectId (id)};
+    const result = await cartData.findOne(users)
+    res.send(result);
+  })
+
+
+  // delete
+  app.delete('/users/:id', async (req, res) => {
+    const id = req.params.id;
+
+    const query = {  _id : new ObjectId (id) };
+    const result = await cartData.deleteOne(query);
+   
+    res.send(result);
+  });
 
 
     // Send a ping to confirm a successful connection
